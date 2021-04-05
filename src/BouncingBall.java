@@ -1,11 +1,5 @@
-import javax.swing.JPanel;
-import javax.swing.Timer;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
 
 
 public class BouncingBall implements Runnable {
@@ -42,3 +36,53 @@ public class BouncingBall implements Runnable {
         T.start();
     }
 
+    public void run(){
+        try {
+            while(true) {
+                field.canMove(this);
+                if (x + speedX <= radius) {
+                    // Достигли левой стенки, отскакиваем право
+                    speedX = -speedX;
+                    x = radius;
+                } else
+                if (x + speedX >= field.getWidth() - radius) {
+                    // Достигли правой стенки, отскок влево
+                    speedX = -speedX;
+                    x=new Double(field.getWidth()-radius).intValue();
+                } else
+                if (y + speedY <= radius) {
+                    // Достигли верхней стенки
+                    speedY = -speedY;
+                    y = radius;
+                } else
+                if (y + speedY >= field.getHeight() - radius) {
+                    // Достигли нижней стенки
+                    speedY = -speedY;
+                    y=new Double(field.getHeight()-radius).intValue();
+                } else {
+// Просто смещаемся
+                    x += speedX;
+                    y += speedY;
+                }
+// Засыпаем на X миллисекунд, где X определяется
+// исходя из скорости
+// Скорость = 1 (медленно), засыпаем на 15 мс.
+// Скорость = 15 (быстро), засыпаем на 1 мс.
+                Thread.sleep(16-speed);
+            }
+        } catch (InterruptedException ex) {
+            // Если нас прервали, то ничего не делаем
+            // и просто выходим (завершаемся)
+        }
+
+    }
+
+    public void paint(Graphics2D canvas){
+        canvas.setColor(color);
+        canvas.setPaint(color);
+        Ellipse2D.Double ball = new Ellipse2D.Double(x-radius, y-radius,
+                2*radius, 2*radius);
+        canvas.draw(ball);
+        canvas.fill(ball);
+    }
+}
