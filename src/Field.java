@@ -10,14 +10,12 @@ import java.awt.Graphics2D;
 public class Field extends JPanel {
 
     private ArrayList<BouncingBall> balls = new ArrayList<BouncingBall>(10);
-    private boolean paused;
 
-    private Timer repaintTimer = new Timer(10,
-            new ActionListener(){
-                public void actionPerformed(ActionEvent ev){
-                    repaint();
-                }
-            });
+    private Timer repaintTimer = new Timer(10, new ActionListener() {
+        public void actionPerformed(ActionEvent ev) {
+            Field.this.repaint();
+        }
+    });
 
     public Field(){
         setBackground(Color.BLACK);
@@ -37,15 +35,26 @@ public class Field extends JPanel {
     }
 
     public synchronized void pause() {
-        paused = true;
+        for (BouncingBall ball: balls){
+            ball.setPaused();
+        }
     }
     public synchronized void resume() {
-        paused = false;
-        notifyAll();
+        for (BouncingBall ball: balls){
+            ball.resumePaused();
+            notify();
+        }
+    }
+    public synchronized void pauseFast() {
+        for (BouncingBall ball: balls) {
+            if(ball.speed >= 10) {
+                ball.setPaused();
+            }
+        }
     }
     public synchronized void canMove(BouncingBall ball)
             throws InterruptedException{
-        if(paused) {
+        if (ball.isPaused()) {
             wait();
         }
     }

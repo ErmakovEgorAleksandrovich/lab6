@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -13,6 +12,7 @@ public class MainFrame extends JFrame {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
     private JMenuItem pauseMenuItem;
+    private JMenuItem pauseFastMenuItem;
     private JMenuItem resumeMenuItem;
 
     private Field field = new Field();
@@ -31,26 +31,45 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent event) {
                 field.addBall();
                 if (!pauseMenuItem.isEnabled() &&
-                        !resumeMenuItem.isEnabled()) {
+                        !resumeMenuItem.isEnabled() &&
+                        !pauseFastMenuItem.isEnabled()) {
                     pauseMenuItem.setEnabled(true);
+                    pauseFastMenuItem.setEnabled(true);
+                    pauseFastMenuItem.setEnabled(true);
                 }
             }
         };
         menuBar.add(ballMenu);
         ballMenu.add(addBallAction);
+
         JMenu controlMenu = new JMenu("Управление");
         menuBar.add(controlMenu);
         Action pauseAction = new AbstractAction("Приостановить движение") {
             public void actionPerformed(ActionEvent event) {
                 field.pause();
                 pauseMenuItem.setEnabled(false);
+                pauseFastMenuItem.setEnabled(false);
                 resumeMenuItem.setEnabled(true);
             }
         };
+        pauseMenuItem = controlMenu.add(pauseAction);
+        pauseMenuItem.setEnabled(false);
+
+        Action pauseActionGreen = new AbstractAction("Приостановить движение быстрых шаров") {
+            public void actionPerformed(ActionEvent event) {
+                field.pauseFast();
+                pauseMenuItem.setEnabled(false);
+                resumeMenuItem.setEnabled(true);
+            }
+        };
+        pauseFastMenuItem = controlMenu.add(pauseActionGreen);
+        pauseFastMenuItem.setEnabled(false);
+
         Action resumeAction = new AbstractAction("Возобновить движение") {
             public void actionPerformed(ActionEvent event) {
                 field.resume();
                 pauseMenuItem.setEnabled(true);
+                pauseFastMenuItem.setEnabled(true);
                 resumeMenuItem.setEnabled(false);
             }
         };
